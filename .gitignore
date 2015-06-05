@@ -1,0 +1,3 @@
+examples/api_key*
+examples/*.exe
+Makefile
