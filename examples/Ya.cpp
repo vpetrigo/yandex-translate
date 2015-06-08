@@ -13,7 +13,7 @@ int main() {
         
         curl_global_init(CURL_GLOBAL_ALL);
         
-        ya_tr t{api_k};
+        ya_tr t{ api_k };
         
         return 0;
     }
