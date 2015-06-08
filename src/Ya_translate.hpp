@@ -27,8 +27,9 @@ namespace Ya_translate {
             curl_easy_setopt(ya_h, CURLOPT_URL, get_langs_link.c_str());
             std::string key_f = (static_cast<std::string> ("key=") + a_k);
             curl_easy_setopt(ya_h, CURLOPT_POSTFIELDS, key_f.c_str());
-            curl_easy_setopt(ya_h, CURLOPT_CAINFO, R"(C:\msys64\usr\ssl\certs\ca-bundle.crt)");
+            curl_easy_setopt(ya_h, CURLOPT_CAINFO, R"(C:\msys64\usr\ssl\certs\ca-bundle.crt)"); // Need to be a path with certificate for https session
             CURLcode res = curl_easy_perform(ya_h);
+            
             if (res != CURLE_OK) {
                 std::cout << "Something went wrong\n";
             }
@@ -37,7 +38,7 @@ namespace Ya_translate {
         ~Ya_tr() {
             curl_easy_cleanup(ya_h);
         }
-        
+         
         static const std::string get_langs_link;
         static const std::string detec_lang_link;
         static const std::string translate_link;
@@ -45,8 +46,4 @@ namespace Ya_translate {
         const std::string& api_key;
         CURL *ya_h;
     };
-    
-    const std::string Ya_tr::get_langs_link = "https://translate.yandex.net/api/v1.5/tr.json/getLangs";
-    const std::string Ya_tr::detec_lang_link = "https://translate.yandex.net/api/v1.5/tr.json/detect";
-    const std::string Ya_tr::translate_link = "https://translate.yandex.net/api/v1.5/tr.json/translate";
 }

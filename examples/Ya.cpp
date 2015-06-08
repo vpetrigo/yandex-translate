@@ -1,5 +1,4 @@
 #include <fstream>
-#include <curl/curl.h>
 #include "Ya_translate.hpp"
 
 using ya_tr = Ya_translate::Ya_tr;
