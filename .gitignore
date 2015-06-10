@@ -1,5 +1,6 @@
 examples/api_key*
 examples/*.exe
 examples/*.o
+src/*.o
 *.o
 Makefile
