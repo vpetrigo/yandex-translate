@@ -67,6 +67,6 @@ namespace Ya_translate {
     }
     
     static void delete_quotes(std::string& json_str) {      
-        json_str.erase(std::remove(json_str.begin(), json_str.end() + 1, json_quotes), json_str.end());
+        json_str.erase(std::remove(json_str.begin(), json_str.end(), json_quotes), json_str.end());
     }
 }
