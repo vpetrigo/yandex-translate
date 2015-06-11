@@ -11,6 +11,8 @@ int main() {
         
         ifs >> api_k;
         
+        ifs.close();
+        
         curl_global_init(CURL_GLOBAL_ALL);
         
         ya_tr t{ api_k };
