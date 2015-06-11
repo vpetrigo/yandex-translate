@@ -1,7 +1,4 @@
 #include "Ya_translate.hpp"
-#include <sstream>
-#include <algorithm>
-#include <cctype>
 
 namespace Ya_translate {
     using json = nlohmann::json;
@@ -58,10 +55,10 @@ namespace Ya_translate {
         std::string from;
         std::string to;
         
-        int delim_pos = s.find(delim);
+        size_t delim_pos = langs.find(delim);
         
-        from = s.substr(0, delim_pos);
-        to = s.substr(delim_pos + 1);
+        from = langs.substr(0, delim_pos);
+        to = langs.substr(delim_pos + 1);
         
         return std::pair<std::string, std::string> {from, to};
     }
