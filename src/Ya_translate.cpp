@@ -22,9 +22,38 @@ namespace Ya_translate {
     const std::string Ya_tr::detec_lang_link = "https://translate.yandex.net/api/v1.5/tr.json/detect";
     // The API link for getting translation
     const std::string Ya_tr::translate_link = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+    // Response codes from API
+    const std::vector<std::string> Ya_tr::resp_codes {"200", "401", "402", "403", "404", "413", "422", "501"};
     
     /* Definitions */
-    
+    Ya_tr::Ya_tr(const std::string& a_k) : api_key{a_k} {
+        if ( !api_key.size() ) {
+            throw Bad_apikey{"You did not pass your API-key"};
+        }
+
+        ya_h = curl_easy_init();
+        curl_easy_setopt(ya_h, CURLOPT_URL, get_langs_link.c_str());
+        std::string key_f = (static_cast<std::string> ("key=") + a_k);
+        curl_easy_setopt(ya_h, CURLOPT_POSTFIELDS, key_f.c_str());
+        curl_easy_setopt(ya_h, CURLOPT_CAINFO, R"(..\certs\ca-bundle.crt)"); // Need to be a path with the certificate for https session
+        curl_easy_setopt(ya_h, CURLOPT_WRITEFUNCTION, handle_data);
+        curl_easy_setopt(ya_h, CURLOPT_WRITEDATA, this);
+        CURLcode res = curl_easy_perform(ya_h);
+
+        if ( res != CURLE_OK ) {
+            std::cout << "Something went wrong\n";
+        }
+
+        if (check_error_code(data)) {
+            std::string err_msg = data["message"].dump();
+
+            delete_quotes(err_msg);
+            throw Bad_apikey{err_msg};
+        }
+
+        avail_lang = get_langs(data["dirs"], lang_delim);
+    }
+
     size_t Ya_tr::handle_data(void *buffer, size_t size, size_t nmemb, void *userp) {
         json data;
         std::istringstream buf { static_cast<char *> (buffer) };
@@ -49,7 +78,17 @@ namespace Ya_translate {
             
             return *langs;
         }
-    
+
+    bool Ya_tr::check_error_code(json::value_type &resp) {
+        if (!resp["code"].is_null()) {
+            std::string code = resp["code"].dump();
+            delete_quotes(code);
+
+            return (code == resp_codes[0]) ? false : true;
+        }
+
+        return false;
+    }
     
     static std::pair<std::string, std::string> split_lang(const std::string& langs, const char delim) {      
         std::string from;
