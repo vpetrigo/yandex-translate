@@ -39,16 +39,17 @@ namespace Ya_translate {
         static const std::vector<std::string> resp_codes;
      private:
         static size_t handle_data(void *buffer, size_t size, size_t nmemb, void *userp);      
-        std::vector<std::pair<std::string, std::string>>& get_langs(json::value_type& dirs, const char delim);
+        std::vector<std::pair<std::string, std::string>> get_langs(const json::value_type& dirs, const char delim);
 
         // NAME check_error_code()
         // DESCRIPTION This function whether a responce from server contain
         // error code
-        bool check_error_code(json::value_type &resp);
+        bool check_error_code(const json::value_type &resp) const;
 
         const std::string api_key;
         char lang_delim { '-' };
         json data;
+        // Vector of all available language directions for Yandex Translate { {"en", "ru"}, {"ar", "ua"} ... }
         std::vector<std::pair<std::string, std::string>> avail_lang;
         CURL *ya_h;
     };

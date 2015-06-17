@@ -23,11 +23,18 @@ namespace Ya_translate {
     // The API link for getting translation
     const std::string Ya_tr::translate_link = "https://translate.yandex.net/api/v1.5/tr.json/translate";
     // Response codes from API
-    const std::vector<std::string> Ya_tr::resp_codes {"200", "401", "402", "403", "404", "413", "422", "501"};
+    const std::vector<std::string> Ya_tr::resp_codes {"200", // OK
+                                                      "401", // Different error codes
+                                                      "402", // that might be in a responce from
+                                                      "403", // YA API in the "code" field
+                                                      "404", // If something goes wrong
+                                                      "413", // responce will contain { "code" : "<err_code", "msg" : "<err_msg>" }
+                                                      "422", // 
+                                                      "501"};//
     
     /* Definitions */
     Ya_tr::Ya_tr(const std::string& a_k) : api_key{a_k} {
-        if ( !api_key.size() ) {
+        if (!api_key.size()) {
             throw Bad_apikey{"You did not pass your API-key"};
         }
 
@@ -52,6 +59,8 @@ namespace Ya_translate {
         }
 
         avail_lang = get_langs(data["dirs"], lang_delim);
+        
+        json.clear();
     }
 
     size_t Ya_tr::handle_data(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -66,24 +75,25 @@ namespace Ya_translate {
     }
     
     
-    std::vector<std::pair<std::string, std::string>>& Ya_tr::get_langs(json::value_type& dirs, const char delim) {
-            std::vector<std::pair<std::string, std::string>> *langs = new std::vector<std::pair<std::string, std::string>>;
+    std::vector<std::pair<std::string, std::string>> Ya_tr::get_langs(const json::value_type& dirs, const char delim) {
+        std::vector<std::pair<std::string, std::string>> langs;
+        
+        for (auto elem : dirs) {
+            std::string from_to { elem.dump() };
             
-            for (auto elem : dirs) {
-                std::string from_to { elem.dump() };
-                
-                delete_quotes(from_to);                
-                langs->push_back(split_lang(from_to, delim));
-            }
-            
-            return *langs;
+            delete_quotes(from_to);                
+            langs->push_back(split_lang(from_to, delim));
         }
+        
+        return langs;
+    }
 
-    bool Ya_tr::check_error_code(json::value_type &resp) {
-        if (!resp["code"].is_null()) {
+    bool Ya_tr::check_error_code(const json::value_type &resp) {
+        if (!resp["code"].is_null() && resp["code"].is_string()) {
             std::string code = resp["code"].dump();
             delete_quotes(code);
-
+            
+            // Check whether the response contains the "200" code
             return (code == resp_codes[0]) ? false : true;
         }
 
@@ -99,7 +109,7 @@ namespace Ya_translate {
         from = langs.substr(0, delim_pos);
         to = langs.substr(delim_pos + 1);
         
-        return std::pair<std::string, std::string> {from, to};
+        return std::make_pair(from, to);
     }
     
     static void delete_quotes(std::string& json_str) {      
