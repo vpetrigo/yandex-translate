@@ -34,9 +34,14 @@ int main() {
             }
         }
         
+        curl_global_cleanup();
+        
         return 0;
     }
     catch (const bad_apikey& e) {
         std::cout << e.get_err() << std::endl;
+        curl_global_cleanup();
+        
+        return 1;
     }
 }
