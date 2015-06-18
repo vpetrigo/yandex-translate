@@ -117,10 +117,10 @@ namespace Ya_translate {
     
     std::string Ya_tr::translate(const std::string& s) {
         std::string key_f = static_cast<std::string> ("key=") + api_key;
-        std::string text_f = static_cast<std::string> ("&text=") + s;
-        std::string lang_f = static_cast<std::string> ("&lang=") + from_to.first + "-" + from_to.second;
+        std::string text_f = static_cast<std::string> ("text=") + s;
+        std::string lang_f = static_cast<std::string> ("lang=") + from_to.first + "-" + from_to.second;
 
-        std::string whole_f = key_f + text_f + lang_f;
+        std::string whole_f = key_f + "&" + text_f + "&" + lang_f;
         curl_easy_setopt(ya_h, CURLOPT_URL, translate_link.c_str());
         curl_easy_setopt(ya_h, CURLOPT_POSTFIELDS, whole_f.c_str());
         
