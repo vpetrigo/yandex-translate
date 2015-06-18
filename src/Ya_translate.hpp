@@ -34,10 +34,18 @@ namespace Ya_translate {
             curl_easy_cleanup(ya_h);
         }
         
+        // The API link for getting available translation directions
         static const std::string get_langs_link;
+        // The API link for detecting language of passed string
         static const std::string detec_lang_link;
+        // The API link for getting translation
         static const std::string translate_link;
+        // Response codes from API
         static const std::vector<int> resp_codes;
+        
+        // Position of translated text in Yandex Translate API
+        // Example: {"code":200,"lang":"en-ru","text":[...]}
+        static constexpr int translate_pos = 0;
         
         // NAME show_langs()
         // DESCRIPTION Provide data about all available data for user
@@ -91,8 +99,10 @@ namespace Ya_translate {
         // DESCRIPTION This function whether a responce from server contain
         // error code
         bool check_error_code(const json::value_type &resp) const;
-
+        
+        // The string to store passed API-key
         const std::string api_key;
+        // Translation direction language delimiter used in Yandex Translate API
         char lang_delim { '-' };
         // Storage of data comes from API responses
         json data;

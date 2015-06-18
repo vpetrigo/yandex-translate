@@ -10,6 +10,9 @@ namespace Ya_translate {
     // So, here we need to split it by a delimiter (in the case above the delimiter is '-')
     static std::pair<std::string, std::string> split_lang(const std::string& langs, const char delim);
     
+    static void handle_curl_err(const std::string& msg);
+    static std::string err_msg_create(const std::string& err_msg);
+    
     // Function for deleting quotes from json responce
     // Accept json string, for example "english-russian" and delete \" quote from the string
     static void delete_quotes(std::string& json_str);
@@ -23,14 +26,16 @@ namespace Ya_translate {
     // The API link for getting translation
     const std::string Ya_tr::translate_link = "https://translate.yandex.net/api/v1.5/tr.json/translate";
     // Response codes from API
-    const std::vector<int> Ya_tr::resp_codes {200, // OK
-                                              401, // Different error codes
-                                              402, // that might be in a responce from
-                                              403, // YA API in the "code" field
-                                              404, // If something goes wrong
-                                              413, // responce will contain { "code" : <err_code, "msg" : "<err_msg>" }
-                                              422, // 
-                                              501};//
+    const std::vector<int> Ya_tr::resp_codes {
+                                              200,  // OK
+                                              401,  // Different error codes
+                                              402,  // that might be in a responce from
+                                              403,  // YA API in the "code" field
+                                              404,  // If something goes wrong
+                                              413,  // responce will contain { "code" : <err_code, "msg" : "<err_msg>" }
+                                              422,  // 
+                                              501   //
+                                              };
     
     /* Definitions */
     Ya_tr::Ya_tr(const std::string& a_k) : api_key{a_k} {
@@ -48,14 +53,11 @@ namespace Ya_translate {
         CURLcode res = curl_easy_perform(ya_h);
 
         if ( res != CURLE_OK ) {
-            std::cout << "Something went wrong\n";
+            handle_curl_err("Curl error: " + std::to_string(res));
         }
 
         if (check_error_code(data)) {
-            std::string err_msg = data["message"].dump();
-
-            delete_quotes(err_msg);
-            throw Bad_apikey{err_msg};
+            throw Bad_apikey{err_msg_create(data["message"])};
         }
 
         avail_lang = get_langs(data["dirs"], lang_delim);
@@ -127,19 +129,27 @@ namespace Ya_translate {
         CURLcode res = curl_easy_perform(ya_h);
         
         if (res != CURLE_OK) {
-            std::cout << "Something went wrong\n";
+            handle_curl_err("Curl error: " + std::string{res});
         }
         
         if (check_error_code(data)) {
-            std::string err_msg = data["message"].dump();
-            delete_quotes(err_msg);
-            
-            return err_msg;
+            return err_msg_create(data["message"]);
         }
         
-        std::string result = data["text"][0];
+        std::string result = data["text"][translate_pos];
         delete_quotes(result);
         
         return result; 
+    }
+    
+    static void handle_curl_err(const std::string& msg) {
+        throw std::logic_error(msg);
+    }
+    
+    static std::string err_msg_create(const std::string& err_msg) {
+        std::string err = err_msg;
+        delete_quotes(err);
+        
+        return err;
     }
 }
