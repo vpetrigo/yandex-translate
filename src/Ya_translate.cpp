@@ -23,14 +23,14 @@ namespace Ya_translate {
     // The API link for getting translation
     const std::string Ya_tr::translate_link = "https://translate.yandex.net/api/v1.5/tr.json/translate";
     // Response codes from API
-    const std::vector<std::string> Ya_tr::resp_codes {"200", // OK
-                                                      "401", // Different error codes
-                                                      "402", // that might be in a responce from
-                                                      "403", // YA API in the "code" field
-                                                      "404", // If something goes wrong
-                                                      "413", // responce will contain { "code" : "<err_code", "msg" : "<err_msg>" }
-                                                      "422", // 
-                                                      "501"};//
+    const std::vector<int> Ya_tr::resp_codes {200, // OK
+                                              401, // Different error codes
+                                              402, // that might be in a responce from
+                                              403, // YA API in the "code" field
+                                              404, // If something goes wrong
+                                              413, // responce will contain { "code" : <err_code, "msg" : "<err_msg>" }
+                                              422, // 
+                                              501};//
     
     /* Definitions */
     Ya_tr::Ya_tr(const std::string& a_k) : api_key{a_k} {
@@ -89,9 +89,8 @@ namespace Ya_translate {
     }
 
     bool Ya_tr::check_error_code(const json::value_type &resp) const {
-        if (!resp["code"].is_null() && resp["code"].is_string()) {
-            std::string code = resp["code"].dump();
-            delete_quotes(code);
+        if (!resp["code"].is_null() && resp["code"].is_number()) {
+            int code = resp["code"];
             
             // Check whether the response contains the "200" code
             return (code == resp_codes[0]) ? false : true;
@@ -114,5 +113,33 @@ namespace Ya_translate {
     
     static void delete_quotes(std::string& json_str) {      
         json_str.erase(std::remove(json_str.begin(), json_str.end(), json_quotes), json_str.end());
+    }
+    
+    std::string Ya_tr::translate(const std::string& s) {
+        std::string key_f = static_cast<std::string> ("key=") + api_key;
+        std::string text_f = static_cast<std::string> ("&text=") + s;
+        std::string lang_f = static_cast<std::string> ("&lang=") + from_to.first + "-" + from_to.second;
+
+        std::string whole_f = key_f + text_f + lang_f;
+        curl_easy_setopt(ya_h, CURLOPT_URL, translate_link.c_str());
+        curl_easy_setopt(ya_h, CURLOPT_POSTFIELDS, whole_f.c_str());
+        
+        CURLcode res = curl_easy_perform(ya_h);
+        
+        if (res != CURLE_OK) {
+            std::cout << "Something went wrong\n";
+        }
+        
+        if (check_error_code(data)) {
+            std::string err_msg = data["message"].dump();
+            delete_quotes(err_msg);
+            
+            return err_msg;
+        }
+        
+        std::string result = data["text"][0];
+        delete_quotes(result);
+        
+        return result; 
     }
 }

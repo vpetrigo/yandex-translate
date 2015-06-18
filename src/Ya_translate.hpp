@@ -37,7 +37,7 @@ namespace Ya_translate {
         static const std::string get_langs_link;
         static const std::string detec_lang_link;
         static const std::string translate_link;
-        static const std::vector<std::string> resp_codes;
+        static const std::vector<int> resp_codes;
         
         // NAME show_langs()
         // DESCRIPTION Provide data about all available data for user
@@ -66,6 +66,23 @@ namespace Ya_translate {
             return false;
         }
         
+        // NAME set_language()
+        // DESCRIPTION sets up language direction which should be used for further
+        // translations
+        bool set_language(const std::string& from, const std::string& to) {
+            if (!check_direction(from, to)) {
+                return false;
+            }
+            else {
+                from_to = std::make_pair(from, to);
+                return true;
+            }
+        }
+        
+        // NAME translate()
+        // DESCRIPTION translates an input string according to setted up language direction
+        std::string translate(const std::string& s);
+        
      private:
         static size_t handle_data(void *buffer, size_t size, size_t nmemb, void *userp);      
         std::vector<std::pair<std::string, std::string>> get_langs(const json::value_type& dirs, const char delim);
@@ -81,6 +98,7 @@ namespace Ya_translate {
         json data;
         // Vector of all available language directions for Yandex Translate { {"en", "ru"}, {"ar", "ua"} ... }
         std::vector<std::pair<std::string, std::string>> avail_lang;
+        std::pair<std::string, std::string> from_to;
         CURL *ya_h;
     };
 }
