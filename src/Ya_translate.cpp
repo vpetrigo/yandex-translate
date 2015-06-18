@@ -60,7 +60,7 @@ namespace Ya_translate {
 
         avail_lang = get_langs(data["dirs"], lang_delim);
         
-        json.clear();
+        data.clear();
     }
 
     size_t Ya_tr::handle_data(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -82,13 +82,13 @@ namespace Ya_translate {
             std::string from_to { elem.dump() };
             
             delete_quotes(from_to);                
-            langs->push_back(split_lang(from_to, delim));
+            langs.push_back(split_lang(from_to, delim));
         }
         
         return langs;
     }
 
-    bool Ya_tr::check_error_code(const json::value_type &resp) {
+    bool Ya_tr::check_error_code(const json::value_type &resp) const {
         if (!resp["code"].is_null() && resp["code"].is_string()) {
             std::string code = resp["code"].dump();
             delete_quotes(code);
