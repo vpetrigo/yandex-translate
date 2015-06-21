@@ -129,7 +129,7 @@ namespace Ya_translate {
         CURLcode res = curl_easy_perform(ya_h);
         
         if (res != CURLE_OK) {
-            handle_curl_err("Curl error: " + std::string{res});
+	    handle_curl_err("Curl error: " + std::to_string(res));
         }
         
         if (check_error_code(data)) {
