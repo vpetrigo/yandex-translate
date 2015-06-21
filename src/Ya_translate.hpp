@@ -5,7 +5,7 @@
 namespace Ya_translate {
     using json = nlohmann::json;
     
-    // Define standart json quotes that can be found in responses
+    // Define standard json quotes that can be found in responses
     // {
     //      "dirs" : "en-ru", "ru-fr", ... <- here we have array of strings
     //      "code" : 200
