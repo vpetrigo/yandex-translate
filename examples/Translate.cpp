@@ -24,7 +24,7 @@ try {
     
     std::cout << "Enter the word you want to translate: ";
     std::cin >> word;
-    std::cout << tr.translate(word) << std::endl;   
+    std::cout << tr.translate(word) << std::endl;
     
     curl_global_cleanup();
     

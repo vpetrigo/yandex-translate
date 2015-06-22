@@ -1,3 +1,6 @@
+#ifndef YANDEX_TRANSLATE_HPP
+#define YANDEX_TRANSLATE_HPP
+
 #include <curl/curl.h>
 #include <stdexcept>
 #include "json.hpp"
@@ -112,3 +115,5 @@ namespace Ya_translate {
         CURL *ya_h;
     };
 }
+
+#endif // end of YANDEX_TRANSLATE_HPP
