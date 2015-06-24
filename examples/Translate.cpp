@@ -10,13 +10,15 @@ try {
     std::string api_key;
     ifs >> api_key;
     
-    ya_tr tr{api_key};
     std::string from, to;
     std::string word;
     
     ifs.close();
     
     curl_global_init(CURL_GLOBAL_ALL);
+    
+    ya_tr tr{api_key};
+    
     std::cout << "Enter the language code of translation (like en ru): ";
     std::cin >> from >> to;
     
