@@ -47,8 +47,10 @@ namespace Ya_translate {
         curl_easy_setopt(ya_h, CURLOPT_URL, get_langs_link.c_str());
         std::string key_f = (static_cast<std::string> ("key=") + a_k);
         curl_easy_setopt(ya_h, CURLOPT_POSTFIELDS, key_f.c_str());
-        // Uncomment the line below if you want to point to a CA-certificate file
-        // curl_easy_setopt(ya_h, CURLOPT_CAINFO, R"(..\certs\ca-bundle.crt)"); // Need to be a path with the certificate for https session
+        // Tested for MINGW64 from MSYS2 package with mingw-w64-x86_64-ca-certificates installed
+#if defined(__GNUC__) && defined(__MINGW32__)
+        curl_easy_setopt(ya_h, CURLOPT_CAINFO, R"(C:/msys64/mingw64/ssl/certs/ca-bundle.crt)"); // Need to be a path with the certificate for https session
+#endif // MINGW64
         curl_easy_setopt(ya_h, CURLOPT_WRITEFUNCTION, handle_data);
         curl_easy_setopt(ya_h, CURLOPT_WRITEDATA, this);
         CURLcode res = curl_easy_perform(ya_h);
