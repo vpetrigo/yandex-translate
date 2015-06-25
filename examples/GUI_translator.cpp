@@ -1,3 +1,8 @@
+// This example uses wrapper classes and functions from http://courses.cse.tamu.edu/keyser/csce121/
+// It is the modified files from original Stroustrup's book "Principles and Practice Using C++"
+// They were modified by TA&M stuff for matching C++11 standard and have no issues with
+// compilation on modern compilators.
+
 #include "Ya_translate.hpp"
 #include "GUI.h"
 #include "Window.h"
