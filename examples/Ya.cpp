@@ -15,7 +15,7 @@ int main() {
         ifs.close();
         
         curl_global_init(CURL_GLOBAL_ALL);
-        
+
         ya_tr t{ api_k };
         
         auto langs = t.show_langs();
@@ -41,7 +41,10 @@ int main() {
     catch (const bad_apikey& e) {
         std::cout << e.get_err() << std::endl;
         curl_global_cleanup();
-        
+
         return 1;
+    }
+    catch (...) {
+        std::cout << "Something wrong happend\n";
     }
 }

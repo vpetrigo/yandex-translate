@@ -99,7 +99,7 @@ namespace Ya_translate {
         std::vector<std::pair<std::string, std::string>> get_langs(const json::value_type& dirs, const char delim);
 
         // NAME check_error_code()
-        // DESCRIPTION This function whether a responce from server contain
+        // DESCRIPTION This function whether a response from server contain
         // error code
         bool check_error_code(const json::value_type &resp) const;
         
