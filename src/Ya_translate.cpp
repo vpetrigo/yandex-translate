@@ -42,7 +42,6 @@ namespace Ya_translate {
         if (!api_key.size()) {
             throw Bad_apikey{"You did not pass your API-key"};
         }
-
         ya_h = curl_easy_init();
         curl_easy_setopt(ya_h, CURLOPT_URL, get_langs_link.c_str());
         std::string key_f = (static_cast<std::string> ("key=") + a_k);
@@ -71,7 +70,7 @@ namespace Ya_translate {
     size_t Ya_tr::handle_data(void *buffer, size_t size, size_t nmemb, void *userp) {
         json data;
         std::istringstream buf { static_cast<char *> (buffer) };
-        
+
         buf >> data;
         
         static_cast<Ya_tr *> (userp)->data = data;
@@ -132,7 +131,7 @@ namespace Ya_translate {
         CURLcode res = curl_easy_perform(ya_h);
         
         if (res != CURLE_OK) {
-	    handle_curl_err("Curl error: " + std::to_string(res));
+            handle_curl_err("Curl error: " + std::to_string(res));
         }
         
         if (check_error_code(data)) {
